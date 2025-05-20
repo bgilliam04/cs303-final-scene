@@ -16,9 +16,8 @@ var storePast = {};
 
 var near = 0.3 * (1.1*15);
 var far = 3.0 * (1.1*15);
-var radius = 4.0 * (4*2);
-var theta = 0.0;
-//var theta = 12*(5.0 * Math.PI/180.0);
+var radius = 4.0 * (4*2) *10;
+var theta = 12*(5.0 * Math.PI/180.0);
 var phi = 0.0;
 var dr = 5.0 * Math.PI/180.0;
 
@@ -118,8 +117,6 @@ window.onload = function init() {
     // buttons for movement
     document.getElementById("Button9").onclick = function(){radius *= 0.9;};
     document.getElementById("Button10").onclick = function(){radius *= 1.1;};
-    //document.getElementById("Button11").onclick = function(){theta -= 6*dr;};
-   // document.getElementById("Button12").onclick = function(){theta += 6*dr;};
 
     document.getElementById("Button11").onclick = function(){
         // step to the left without turning
