@@ -113,7 +113,7 @@ window.onload = function init() {
 
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
-    rotationMatrixLoc = gl.getUniformLocation(program, "uRotation");
+   
 
     // buttons for movement
     document.getElementById("Button9").onclick = function(){radius *= 0.9;};
@@ -223,7 +223,7 @@ var render = function(){
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
-    gl.uniformMatrix4fv(rotationMatrixLoc, false, flatten(rotationMatrix));
+  
 
     gl.drawArrays(gl.TRIANGLES, 0, positionsArray.length);
 
