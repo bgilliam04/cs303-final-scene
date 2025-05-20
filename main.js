@@ -16,7 +16,7 @@ var storePast = {};
 
 var near = 0.3 * (1.1*15);
 var far = 3.0 * (1.1*15);
-var radius = 4.0 * (4*2) *10;
+var radius = 4.0 * (4*2);
 var theta = 12*(5.0 * Math.PI/180.0);
 var phi = 0.0;
 var dr = 5.0 * Math.PI/180.0;
@@ -24,7 +24,7 @@ var dr = 5.0 * Math.PI/180.0;
 var  fovy = 65.0;  // Field-of-view in Y direction angle (in degrees)
 var  aspect;       // Viewport aspect ratio
 
-var positionofC;
+
 var angle = 0.0;
 
     
