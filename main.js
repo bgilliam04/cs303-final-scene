@@ -29,7 +29,6 @@ var angle = 0.0;
 
     
 var modelViewMatrixLoc, projectionMatrixLoc;
-var rotationMatrixLoc;
 var modelViewMatrix, projectionMatrix;
 
 var eye;
