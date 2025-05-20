@@ -32,8 +32,8 @@ var modelViewMatrixLoc, projectionMatrixLoc;
 var modelViewMatrix, projectionMatrix;
 
 var eye;
-var at = vec3(0.0, 5.0, 0.0);
-const up = vec3(0.0, 1.0, 0.0);
+var at = vec3(0.0, 1.0, 0.0);
+const up = vec3(0.0, 5.0, 0.0);
 
 
 
