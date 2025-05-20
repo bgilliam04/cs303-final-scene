@@ -21,7 +21,7 @@ var theta = 12*(5.0 * Math.PI/180.0);
 var phi = 0.0;
 var dr = 5.0 * Math.PI/180.0;
 
-var  fovy = 85.0;  // Field-of-view in Y direction angle (in degrees)
+var  fovy = 65.0;  // Field-of-view in Y direction angle (in degrees)
 var  aspect;       // Viewport aspect ratio
 
 var positionofC;
@@ -32,7 +32,7 @@ var modelViewMatrixLoc, projectionMatrixLoc;
 var modelViewMatrix, projectionMatrix;
 
 var eye;
-var at = vec3(0.0, 1.0, 0.0);
+var at = vec3(0.0, 2.0, 0.0);
 const up = vec3(0.0, 1.0, 0.0);
 
 
