@@ -115,6 +115,8 @@ window.onload = function init() {
    
 
     // buttons for movement
+    document.getElementById("Button1").onclick = function(){near  *= 1.1; far *= 1.1;};
+    document.getElementById("Button2").onclick = function(){near *= 0.9; far *= 0.9;};
     document.getElementById("Button9").onclick = function(){radius *= 0.9;};
     document.getElementById("Button10").onclick = function(){radius *= 1.1;};
 
