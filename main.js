@@ -9,20 +9,37 @@ var colorsArray = [];
 
 var storePast = {};
     
-var radius = 4;
-var  fovy =65.0;  // Field-of-view in Y direction angle (in degrees)           
-var  aspect;       // Viewport aspect ratio                                     
-var eye;
+//var radius = 4;
+//var  fovy =65.0;  // Field-of-view in Y direction angle (in degrees)           
+//var  aspect;       // Viewport aspect ratio                                     
+//var eye;
 
+var near = 0.3 * (1.1*15);
+var far = 3.0 * (1.1*15);
+var radius = 4.0 * (4*2);
+var theta = 12*(5.0 * Math.PI/180.0);
+var phi = 0.0;
+var dr = 5.0 * Math.PI/180.0;
+
+var  fovy = 45.0;  // Field-of-view in Y direction angle (in degrees)
+var  aspect;       // Viewport aspect ratio
+
+var positionofC;
+var angle = 0.0;
 
     
 var modelViewMatrixLoc, projectionMatrixLoc;
+var rotationMatrixLoc;
 var modelViewMatrix, projectionMatrix;
-var theta = 0;
-    
-const at = vec3(0.0, 1.0, 0.0);
+
+var eye;
+var at = vec3(0.0, 0.0, 0.0);
 const up = vec3(0.0, 1.0, 0.0);
 
+
+
+//var theta = 0;
+    
 window.onload = function init() {
 
     canvas = document.getElementById("gl-canvas");
@@ -96,6 +113,23 @@ window.onload = function init() {
 
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
+    rotationMatrixLoc = gl.getUniformLocation(program, "uRotation");
+
+    // buttons for movement
+    document.getElementById("Button9").onclick = function(){radius *= 0.9;};
+    document.getElementById("Button10").onclick = function(){radius *= 1.1;};
+    //document.getElementById("Button11").onclick = function(){theta -= 6*dr;};
+   // document.getElementById("Button12").onclick = function(){theta += 6*dr;};
+
+    document.getElementById("Button11").onclick = function(){
+        // step to the left without turning
+        at[0] -= 0.5;
+    };
+
+    document.getElementById("Button12").onclick = function(){
+        // step to the right without turning
+        at[0] += 0.5;
+    };
 
     render();
 }
@@ -179,15 +213,20 @@ function divideRectangles(rows, cols, heightScale) {
 var render = function(){
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    eye = vec3(radius*Math.cos(theta), 1, radius*Math.sin(theta));
-    modelViewMatrix = lookAt(eye, at, up);
-    projectionMatrix = perspective(fovy, aspect, 2, 10);
+    angle += 1;
+
+    eye = vec3(radius*Math.sin(theta)*Math.cos(phi),
+        radius*Math.sin(theta)*Math.sin(phi), radius*Math.cos(theta));
+    modelViewMatrix = lookAt(eye, at , up);
+    projectionMatrix = perspective(fovy, aspect, near, far);
 
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
+    gl.uniformMatrix4fv(rotationMatrixLoc, false, flatten(rotationMatrix));
+
     gl.drawArrays(gl.TRIANGLES, 0, positionsArray.length);
-    theta += 0.002;
+
     requestAnimationFrame(render);
 }
 
