@@ -221,7 +221,6 @@ var render = function(){
 
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
-
   
 
     gl.drawArrays(gl.TRIANGLES, 0, positionsArray.length);
