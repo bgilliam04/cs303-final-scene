@@ -17,7 +17,8 @@ var storePast = {};
 var near = 0.3 * (1.1*15);
 var far = 3.0 * (1.1*15);
 var radius = 4.0 * (4*2);
-var theta = 12*(5.0 * Math.PI/180.0);
+var theta = 0.0;
+//var theta = 12*(5.0 * Math.PI/180.0);
 var phi = 0.0;
 var dr = 5.0 * Math.PI/180.0;
 
@@ -33,7 +34,7 @@ var modelViewMatrix, projectionMatrix;
 
 var eye;
 var at = vec3(0.0, 1.0, 0.0);
-const up = vec3(0.0, 5.0, 0.0);
+const up = vec3(0.0, 1.0, 0.0);
 
 
 
