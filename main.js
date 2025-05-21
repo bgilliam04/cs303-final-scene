@@ -60,7 +60,7 @@ window.onload = function init() {
         } else {
             positionsArray = [];
             colorsArray = [];
-            divideRectangles(80, 80, divLevel);
+            divideRectangles(150, 150, divLevel);
     
             storePast[divLevel] = {
                 positions: positionsArray.slice(),
@@ -75,7 +75,7 @@ window.onload = function init() {
         gl.bufferData(gl.ARRAY_BUFFER, flatten(colorsArray), gl.STATIC_DRAW);
     };
     
-    divideRectangles(80, 80, element.value); 
+    divideRectangles(150, 150, element.value); 
     //divideTriangle( vertices[0], vertices[1], vertices[2], 1, element.value);
     
 
@@ -138,17 +138,16 @@ function divideRectangles(rows, cols, heightScale) {
     colorsArray = [];
 
 
-    var scale = 5;
-    
+
     // generate a grid that can be changed based on the number of rows and cols
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
 
             // determining the 4 corners of each rectangle in the grid
-            var x0 = -scale + 2 * scale * col / cols;
-            var x1 = -scale + 2 * scale * (col + 1) / cols;
-            var z0 = -scale + 2 * scale * row / rows;
-            var z1 = -scale + 2 * scale * (row + 1) / rows;
+            var x0 = -1 + 2  * col / cols;
+            var x1 = -1 + 2  * (col + 1) / cols;
+            var z0 = -1 + 2  * row / rows;
+            var z1 = -1 + 2  * (row + 1) / rows;
 
 
             // random heights for the grass
