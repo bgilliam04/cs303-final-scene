@@ -14,8 +14,8 @@ var storePast = {};
 //var  aspect;       // Viewport aspect ratio                                     
 //var eye;
 
-var near = 0.3;
-var far = 3.0;
+var near = 0.3* (0.9*14);
+var far = 3.0 * (0.9*14);
 var radius = 2;
 var theta = 12*(5.0 * Math.PI/180.0);
 var phi = 0.0;
@@ -138,15 +138,18 @@ function divideRectangles(rows, cols, heightScale) {
     colorsArray = [];
 
 
+    var scale = 5;
+    
     // generate a grid that can be changed based on the number of rows and cols
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
 
             // determining the 4 corners of each rectangle in the grid
-            var x0 = -1 + 2 * col / cols;
-            var x1 = -1 + 2 * (col + 1) / cols;
-            var z0 = -1 + 2 * row / rows;
-            var z1 = -1 + 2 * (row + 1) / rows;
+            var x0 = -scale + 2 * scale * col / cols;
+            var x1 = -scale + 2 * scale * (col + 1) / cols;
+            var z0 = -scale + 2 * scale * row / rows;
+            var z1 = -scale + 2 * scale * (row + 1) / rows;
+
 
             // random heights for the grass
             let y00 = Math.random() * heightScale;
