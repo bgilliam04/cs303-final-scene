@@ -17,11 +17,11 @@ var storePast = {};
 var near = 0.3* (0.9*12);
 var far = 3.0 * (0.9*12);
 var radius = 2;
-var theta = 12*(5.0 * Math.PI/180.0);
+var theta = 8*(5.0 * Math.PI/180.0);
 var phi = 0.0;
 var dr = 5.0 * Math.PI/180.0;
 
-var  fovy = 45.0;  // Field-of-view in Y direction angle (in degrees)
+var  fovy = 35.0;  // Field-of-view in Y direction angle (in degrees)
 var  aspect;       // Viewport aspect ratio
 
 
@@ -218,7 +218,7 @@ var render = function(){
 
     eye = vec3(
         radius*Math.sin(theta)*Math.cos(phi),
-        0.5, 
+        0.3, 
         radius*Math.cos(theta));
     modelViewMatrix = lookAt(eye, at , up);
     projectionMatrix = perspective(fovy, aspect, near, far);
