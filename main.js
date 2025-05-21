@@ -16,7 +16,7 @@ var storePast = {};
 
 var near = 0.3 * (1.1*15);
 var far = 3.0 * (1.1*15);
-var radius = 1.0 * (4*2);
+var radius = 0.4 * (4*2);
 var theta = 12*(5.0 * Math.PI/180.0);
 var phi = 0.0;
 var dr = 5.0 * Math.PI/180.0;
