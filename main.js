@@ -218,7 +218,7 @@ var render = function(){
 
     eye = vec3(
         radius*Math.sin(theta)*Math.cos(phi),
-        1, 
+        0.8, 
         radius*Math.cos(theta));
     modelViewMatrix = lookAt(eye, at , up);
     projectionMatrix = perspective(fovy, aspect, near, far);
