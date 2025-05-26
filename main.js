@@ -61,7 +61,10 @@ window.onload = function init() {
     
     divideRectangles(80, 80, element.value); 
     
-    drawBranch(0.0, 0.0, 0.0, 20, 7, 0.5);
+    // A thicker, more realistic base
+    drawBranch(0.0, 0.0, 0.0, 90, 6, 0.2, 0.01);
+
+    //drawBranch(0.0, 0.0, 0.0, 20, 7, 0.5);
 
     //divideTriangle( vertices[0], vertices[1], vertices[2], 1, element.value);
     
@@ -146,7 +149,7 @@ function divideRectangles(rows, cols, heightScale) {
     }
 }
 
-function drawBranch(x, y, z, angle, depth, length) {
+/*function drawBranch(x, y, z, angle, depth, length) {
     if (depth === 0) return;
 
     // Convert angle to radians
@@ -176,7 +179,47 @@ function drawBranch(x, y, z, angle, depth, length) {
 
     drawBranch(newX, newY, newZ, angle + 25, newDepth, newLength); // left
     drawBranch(newX, newY, newZ, angle - 25, newDepth, newLength); // right
+}*/
+
+function drawBranch(x, y, z, angle, depth, length, width) {
+    if (depth === 0) return;
+
+    let rad = angle * (Math.PI / 180);
+
+    // Compute end point
+    let newX = x + length * Math.cos(rad);
+    let newY = y + length;
+    let newZ = z + length * Math.sin(rad);
+
+    // Offset for width (branch thickness)
+    let offset = width;
+
+    let a = vec4(x - offset, y, z, 1);
+    let b = vec4(x + offset, y, z, 1);
+    let c = vec4(newX + offset, newY, newZ, 1);
+    let d = vec4(newX - offset, newY, newZ, 1);
+
+    // Two triangles to form a quad-like branch face
+    positionsArray.push(a, b, c);
+    positionsArray.push(a, c, d);
+
+    let brown = vec4(0.4 + 0.05 * depth, 0.2, 0.05, 1.0);
+    let green = vec4(0.2, 0.6 + Math.random() * 0.2, 0.2, 1.0);
+
+    let color = (depth === 1) ? green : brown;
+    for (let i = 0; i < 6; i++) {
+        colorsArray.push(color);
+    }
+
+    let newLength = length * (0.75 + Math.random() * 0.1);
+    let newWidth = width * 0.7;
+    let newDepth = depth - 1;
+
+    // More randomized angles for organic shape
+    drawBranch(newX, newY, newZ, angle + 20 + Math.random() * 10, newDepth, newLength, newWidth);
+    drawBranch(newX, newY, newZ, angle - 20 - Math.random() * 10, newDepth, newLength, newWidth);
 }
+
 
 
 
