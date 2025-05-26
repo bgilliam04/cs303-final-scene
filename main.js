@@ -9,18 +9,44 @@ var colorsArray = [];
 
 var storePast = {};
     
+
 var radius = 4;
 var  fovy =65.0;  // Field-of-view in Y direction angle (in degrees)           
 var  aspect;       // Viewport aspect ratio                                     
 var eye;
 
+=======
+//var radius = 4;
+//var  fovy =65.0;  // Field-of-view in Y direction angle (in degrees)           
+//var  aspect;       // Viewport aspect ratio                                     
+//var eye;
+
+var near = 0.3* (0.9*12);
+var far = 3.0 * (0.9*12);
+var radius = 2;
+var theta = 10*(5.0 * Math.PI/180.0);
+var phi = 0.0;
+var dr = 5.0 * Math.PI/180.0;
+
+var  fovy = 35.0;  // Field-of-view in Y direction angle (in degrees)
+var  aspect;       // Viewport aspect ratio
+
+
+var angle = 0.0;
+
 
     
 var modelViewMatrixLoc, projectionMatrixLoc;
 var modelViewMatrix, projectionMatrix;
+
 var theta = 0;
     
 const at = vec3(0.0, 1.0, 0.0);
+=======
+
+var eye;
+var at = vec3(0.0, 1.0, 0.0);
+
 const up = vec3(0.0, 1.0, 0.0);
 
 window.onload = function init() {
@@ -44,7 +70,7 @@ window.onload = function init() {
         } else {
             positionsArray = [];
             colorsArray = [];
-            divideRectangles(80, 80, divLevel);
+            divideRectangles(150, 150, divLevel);
     
             storePast[divLevel] = {
                 positions: positionsArray.slice(),
@@ -59,7 +85,7 @@ window.onload = function init() {
         gl.bufferData(gl.ARRAY_BUFFER, flatten(colorsArray), gl.STATIC_DRAW);
     };
     
-    divideRectangles(80, 80, element.value); 
+    divideRectangles(150, 150, element.value); 
     //divideTriangle( vertices[0], vertices[1], vertices[2], 1, element.value);
     
 
@@ -97,6 +123,26 @@ window.onload = function init() {
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
 
+=======
+   
+
+    // buttons for movement
+    document.getElementById("Button1").onclick = function(){near  *= 1.1; far *= 1.1;};
+    document.getElementById("Button2").onclick = function(){near *= 0.9; far *= 0.9;};
+    document.getElementById("Button9").onclick = function(){radius *= 0.9;};
+    document.getElementById("Button10").onclick = function(){radius *= 1.1;};
+
+    document.getElementById("Button11").onclick = function(){
+        // step to the left without turning
+        at[0] -= 0.5;
+    };
+
+    document.getElementById("Button12").onclick = function(){
+        // step to the right without turning
+        at[0] += 0.5;
+    };
+
+
     render();
 }
 
@@ -105,15 +151,17 @@ function divideRectangles(rows, cols, heightScale) {
     colorsArray = [];
 
 
+
     // generate a grid that can be changed based on the number of rows and cols
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
 
             // determining the 4 corners of each rectangle in the grid
-            var x0 = -1 + 2 * col / cols;
-            var x1 = -1 + 2 * (col + 1) / cols;
-            var z0 = -1 + 2 * row / rows;
-            var z1 = -1 + 2 * (row + 1) / rows;
+            var x0 = -1 + 2  * col / cols;
+            var x1 = -1 + 2  * (col + 1) / cols;
+            var z0 = -1 + 2  * row / rows;
+            var z1 = -1 + 2  * (row + 1) / rows;
+
 
             // random heights for the grass
             let y00 = Math.random() * heightScale;
@@ -185,6 +233,18 @@ var render = function(){
 
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
+    angle += 1;
+
+    eye = vec3(
+        radius*Math.sin(theta)*Math.cos(phi),
+        0.1, 
+        radius*Math.cos(theta));
+    modelViewMatrix = lookAt(eye, at , up);
+    projectionMatrix = perspective(fovy, aspect, near, far);
+
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+    gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
+  
 
     gl.drawArrays(gl.TRIANGLES, 0, positionsArray.length);
     theta += 0.002;
