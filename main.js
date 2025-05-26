@@ -175,6 +175,8 @@ function divideRectangles(rows, cols, heightScale) {
         divideTriangle( b, c, midpoint, newFactor, count );
     }
 }*/
+
+// slight change
     
 var render = function(){
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
