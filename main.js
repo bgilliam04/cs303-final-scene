@@ -61,7 +61,7 @@ window.onload = function init() {
     
     divideRectangles(80, 80, element.value); 
     
-    drawBranch(0.0, 0.0, 0.0, 70, 7, 0.5);
+    drawBranch(0.0, 0.0, 0.0, 45, 7, 0.5);
 
     //divideTriangle( vertices[0], vertices[1], vertices[2], 1, element.value);
     
