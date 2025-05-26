@@ -146,41 +146,38 @@ function divideRectangles(rows, cols, heightScale) {
     }
 }
 
-function drawBranch(start, angle, depth, length) {
+function drawBranch(x, y, z, angle, depth, length) {
     if (depth === 0) return;
 
     // Convert angle to radians
     let rad = angle * (Math.PI / 180);
 
-    // Calculate new endpoint
-    let end = [
-        start[0] + length * Math.cos(rad),
-        start[1] + length,
-        start[2] + length * Math.sin(rad)
-    ];
+    // Calculate the end point
+    let newX = x + length * Math.cos(rad);
+    let newY = y + length;
+    let newZ = z + length * Math.sin(rad);
 
-    // Push line segment as a very thin vertical triangle (simulate branch thickness)
-    let a = vec4(start[0], start[1], start[2], 1);
-    let b = vec4(end[0], end[1], end[2], 1);
-    let offset = 0.01;
+    // Line segment as a skinny triangle to simulate thickness
+    let a = vec4(x, y, z, 1);
+    let b = vec4(newX, newY, newZ, 1);
+    let c = vec4(x + 0.005, y, z + 0.005, 1); // small offset to simulate width
 
-    let right = vec4(start[0] + offset, start[1], start[2] + offset, 1);
-    let left = vec4(start[0] - offset, start[1], start[2] - offset, 1);
+    positionsArray.push(a, b, c);
+    positionsArray.push(b, c, a); // second triangle for same branch
 
-    positionsArray.push(a, b, right);
-    positionsArray.push(a, b, left);
+    // Brown color for tree
+    let color = vec4(0.55, 0.27, 0.07, 1.0);
+    colorsArray.push(color, color, color);
+    colorsArray.push(color, color, color);
 
-    let brown = vec4(0.55, 0.27, 0.07, 1.0);
-    colorsArray.push(brown, brown, brown, brown, brown, brown);
-
-    // Recursive branches
+    // Recurse with shorter length and different angles
     let newLength = length * 0.7;
     let newDepth = depth - 1;
 
-    drawBranch(end, angle + 25, newDepth, newLength); // left
-    drawBranch(end, angle - 25, newDepth, newLength); // right
-    drawBranch(end, angle, newDepth, newLength);      // middle/trunk
+    drawBranch(newX, newY, newZ, angle + 25, newDepth, newLength); // left
+    drawBranch(newX, newY, newZ, angle - 25, newDepth, newLength); // right
 }
+
 
 
 
