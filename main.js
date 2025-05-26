@@ -60,6 +60,9 @@ window.onload = function init() {
     };
     
     divideRectangles(80, 80, element.value); 
+    
+    drawBranch([0.0, 0.0, 0.0], 90, 5, 0.2);
+
     //divideTriangle( vertices[0], vertices[1], vertices[2], 1, element.value);
     
 
@@ -142,6 +145,43 @@ function divideRectangles(rows, cols, heightScale) {
         }
     }
 }
+
+function drawBranch(start, angle, depth, length) {
+    if (depth === 0) return;
+
+    // Convert angle to radians
+    let rad = angle * (Math.PI / 180);
+
+    // Calculate new endpoint
+    let end = [
+        start[0] + length * Math.cos(rad),
+        start[1] + length,
+        start[2] + length * Math.sin(rad)
+    ];
+
+    // Push line segment as a very thin vertical triangle (simulate branch thickness)
+    let a = vec4(start[0], start[1], start[2], 1);
+    let b = vec4(end[0], end[1], end[2], 1);
+    let offset = 0.01;
+
+    let right = vec4(start[0] + offset, start[1], start[2] + offset, 1);
+    let left = vec4(start[0] - offset, start[1], start[2] - offset, 1);
+
+    positionsArray.push(a, b, right);
+    positionsArray.push(a, b, left);
+
+    let brown = vec4(0.55, 0.27, 0.07, 1.0);
+    colorsArray.push(brown, brown, brown, brown, brown, brown);
+
+    // Recursive branches
+    let newLength = length * 0.7;
+    let newDepth = depth - 1;
+
+    drawBranch(end, angle + 25, newDepth, newLength); // left
+    drawBranch(end, angle - 25, newDepth, newLength); // right
+    drawBranch(end, angle, newDepth, newLength);      // middle/trunk
+}
+
 
 
 /*function triangle(a, b, c)
