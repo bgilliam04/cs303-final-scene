@@ -160,7 +160,7 @@ function drawBranch(x, y, z, angle, depth, length) {
     // Line segment as a skinny triangle to simulate thickness
     let a = vec4(x, y, z, 1);
     let b = vec4(newX, newY, newZ, 1);
-    let c = vec4(x + 0.05, y, z + 0.05, 1); // small offset to simulate width
+    let c = vec4(x + 0.005, y, z + 0.005, 1); // small offset to simulate width
 
     positionsArray.push(a, b, c);
     positionsArray.push(b, c, a); // second triangle for same branch
