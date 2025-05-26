@@ -12,11 +12,10 @@ out vec4 vColor;
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
-uniform mat4 uRotation;
 
 void main()
 {
-    gl_Position = uProjectionMatrix * uModelViewMatrix * uRotation * aPosition;
+    gl_Position = uProjectionMatrix*uModelViewMatrix*aPosition;
     vColor = aColor;
 }
 </script>
@@ -44,11 +43,6 @@ main()
 <canvas id="gl-canvas" width="512" height="512">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
-
-<button id = "Button9">Move Forward</button>
-<button id = "Button10">Move Backward</button>
-<button id = "Button11">Move Left</button>
-<button id = "Button12">Move Right</button>
 
 <div>
     number of divisions: 0% <input id="getcount" type="range"
