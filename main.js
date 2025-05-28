@@ -1,5 +1,9 @@
 "use strict";
-
+//https://lautarolobo.xyz/blog/use-javascript-and-html5-to-code-a-fractal-tree/
+// used as a reference for an example of a fractal tree
+//https://stackoverflow.com/questions/58354311/recursive-fractal-2d-tree-drawing-in-webgl
+//https://stackoverflow.com/questions/13133574/creating-a-fractal-tree-in-opengl/13134379#13134379
+//more explaination of how to draw a fractal tree in webgl
 var mountainExample = function(){
 var canvas;
 var gl;
@@ -14,7 +18,12 @@ var  fovy =65.0;  // Field-of-view in Y direction angle (in degrees)
 var  aspect;       // Viewport aspect ratio                                     
 var eye;
 
+var grassVertexCount = 0;
+var treeVertexCount = 0;
 
+var brown = vec4(0.26275, 0.14902, 0.08627, 1.0);
+var green = vec4(0.333, 0.420, 0.184, 1.0);
+var color = vec4(0.2, 0.8, 0.2, 1.0); // Grass color
     
 var modelViewMatrixLoc, projectionMatrixLoc;
 var modelViewMatrix, projectionMatrix;
@@ -59,12 +68,16 @@ window.onload = function init() {
         gl.bufferData(gl.ARRAY_BUFFER, flatten(colorsArray), gl.STATIC_DRAW);
     };
     
-    divideRectangles(80, 80, element.value); 
     
-    // A thicker, more realistic base
-    drawBranch(0.0, 0.0, 0.0, 90, 6, 0.2, 0.01);
+    divideRectangles(80, 80, element.value); 
 
-    //drawBranch(0.0, 0.0, 0.0, 20, 7, 0.5);
+    addFlowers(80); // you can make this higher or lower!
+  
+    grassVertexCount = positionsArray.length;
+    for (let i = 0; i < 12; i++) {
+        drawRotatedTree(i * 15); // every 45 degrees
+    }
+    treeVertexCount = positionsArray.length - grassVertexCount;
 
     //divideTriangle( vertices[0], vertices[1], vertices[2], 1, element.value);
     
@@ -121,7 +134,7 @@ function divideRectangles(rows, cols, heightScale) {
             var z0 = -1 + 2 * row / rows;
             var z1 = -1 + 2 * (row + 1) / rows;
 
-            // random heights for the grass
+            // 4 different random heights to choose from for the grass
             let y00 = Math.random() * heightScale;
             let y10 = Math.random() * heightScale;
             let y01 = Math.random() * heightScale;
@@ -149,90 +162,152 @@ function divideRectangles(rows, cols, heightScale) {
     }
 }
 
-/*function drawBranch(x, y, z, angle, depth, length) {
-    if (depth === 0) return;
+function drawBranch(x, y, z, angle, depth, lengthScale, width) {
+    
 
-    // Convert angle to radians
-    let rad = angle * (Math.PI / 180);
+  
+    // Calculate end point of the branch
+    let len = 0.2 * lengthScale;
+    let rad = angle * Math.PI / 180;
 
-    // Calculate the end point
-    let newX = x + length * Math.cos(rad);
-    let newY = y + length;
-    let newZ = z + length * Math.sin(rad);
+    if (depth === 0) {
+    // Draw a leaf at the end of this branch
+    let leafSize = 0.3;
 
-    // Line segment as a skinny triangle to simulate thickness
-    let a = vec4(x, y, z, 1);
-    let b = vec4(newX, newY, newZ, 1);
-    let c = vec4(x + 0.009, y, z + 0.009, 1); // small offset to simulate width
+    
+    // Tip of the final branch
+    let leafX = x + 0.05 * lengthScale * Math.sin(rad);
+    let leafY = y + 0.05 * lengthScale * Math.cos(rad);
+    let leafZ = z;
 
-    positionsArray.push(a, b, c);
-    positionsArray.push(b, c, a); // second triangle for same branch
+    if (leafY < 0.7) {
+        return; 
+    }// skip this leaf if it's too low
 
-    // Brown color for tree
-    let color = vec4(0.55, 0.27, 0.07, 1.0);
-    colorsArray.push(color, color, color);
-    colorsArray.push(color, color, color);
 
-    // Recurse with shorter length and different angles
-    let newLength = length * 0.7;
-    let newDepth = depth - 1;
 
-    drawBranch(newX, newY, newZ, angle + 25, newDepth, newLength); // left
-    drawBranch(newX, newY, newZ, angle - 25, newDepth, newLength); // right
-}*/
+    for (let i = 0; i < 5; i++) {
+        let dx = (Math.random() - 0.5) * leafSize;
+        let dy = (Math.random() - 0.5) * leafSize;
+        let dz = (Math.random() - 0.5) * leafSize;
 
-function drawBranch(x, y, z, angle, depth, length, width) {
-    if (depth === 0) return;
+        let a = vec4(leafX, leafY, leafZ, 1.0);
+        let b = vec4(leafX + dx, leafY + dy, leafZ + dz, 1.0);
+        let c = vec4(leafX - dx, leafY + dy, leafZ - dz, 1.0);
 
-    let rad = angle * (Math.PI / 180);
-
-    // Compute end point
-    let newX = x + length * Math.cos(rad);
-    let newY = y + length;
-    let newZ = z + length * Math.sin(rad);
-
-    // Offset for width (branch thickness)
-    let offset = width;
-
-    let a = vec4(x - offset, y, z, 1);
-    let b = vec4(x + offset, y, z, 1);
-    let c = vec4(newX + offset, newY, newZ, 1);
-    let d = vec4(newX - offset, newY, newZ, 1);
-
-    // Two triangles to form a quad-like branch face
-    positionsArray.push(a, b, c);
-    positionsArray.push(a, c, d);
-
-    let brown = vec4(0.4 + 0.05 * depth, 0.2, 0.05, 1.0);
-    let green = vec4(0.2, 0.6 + Math.random() * 0.2, 0.2, 1.0);
-
-    let color = (depth === 1) ? green : brown;
-    for (let i = 0; i < 6; i++) {
-        colorsArray.push(color);
+        positionsArray.push(a, b, c);
+        colorsArray.push(green, green, green);
+        positionsArray.push(a, c, b);
+        colorsArray.push(vec4(0.420, 0.557, 0.137,1), vec4(0.420, 0.557, 0.137,1), vec4(0.420, 0.557, 0.137,1));
     }
 
-    let newLength = length * (0.75 + Math.random() * 0.1);
-    let newWidth = width * 0.7;
-    let newDepth = depth - 1;
+    return;
+}
 
-    // More randomized angles for organic shape
-    drawBranch(newX, newY, newZ, angle + 20 + Math.random() * 10, newDepth, newLength, newWidth);
-    drawBranch(newX, newY, newZ, angle - 20 - Math.random() * 10, newDepth, newLength, newWidth);
+
+    let newX = x + len * Math.sin(rad);
+    let newY = y + len * Math.cos(rad);
+
+    // Add the branch line (as 2 points)
+    positionsArray.push(vec4(x, y, z, 1));
+    positionsArray.push(vec4(newX, newY, z, 1));
+
+    colorsArray.push(brown, brown);
+
+    // Recursive branches
+    drawBranch(newX, newY, z, angle - 20, depth - 1, lengthScale * 0.8, width * 0.8);
+    drawBranch(newX, newY, z, angle + 20, depth - 1, lengthScale * 0.8, width * 0.8);
+// red or whatever color you want
+}
+
+function drawRotatedTree(rotationDegrees) {
+    // Make a matrix that turns the tree around the Y axis
+    let rotation = rotateY(rotationDegrees);
+
+    // Save how many points are already in your array
+    let start = positionsArray.length;
+
+    // Draw one normal tree at the origin
+    drawTriangleTrunk(0.0, 0.0, 0.0, 0.9, 0.15, 4);
+    positionsArray.push(vec4(0,0,0,1));
+    colorsArray.push(vec4(0.26275, 0.14902, 0.08627, 1.0));
+    drawBranch(0.0, 0.0, 0.0, 0, 10, 2.0, 0.005);
+    
+    
+
+    // After it's drawn, apply the rotation to the *new* points
+    for (let i = start; i < positionsArray.length; i++) {
+        positionsArray[i] = mult(rotation, positionsArray[i]);
+    }
+}
+
+
+function drawTriangleTrunk(x, y, z, height, width, divisions) {
+    let baseLeft = vec4(x - width, y, z, 1.0);
+    let baseRight = vec4(x + width, y, z, 1.0);
+    let top = vec4(x, y + height, z, 1.0);
+
+    divideTriangle(baseLeft, baseRight, top, 0.2, divisions);
+}
+
+function addFlowers(count) {
+    const petalColors = [
+        vec4(1.0, 0.6, 0.8, 1.0), // pink
+        vec4(1.0, 1.0, 0.5, 1.0), // yellow
+        vec4(0.6, 0.6, 1.0, 1.0), // purple
+        vec4(1.0, 0.7, 0.3, 1.0)  // orange
+    ];
+
+    const centerColor = vec4(1.0, 0.9, 0.2, 1.0); // gold/yellow center
+
+    for (let i = 0; i < count; i++) {
+        let x = -1 + 2 * Math.random();
+        let z = -1 + 2 * Math.random();
+        let y = 0.08;
+
+        let petalCount = 6;
+        let radius = 0.025;
+
+        let petalColor = petalColors[Math.floor(Math.random() * petalColors.length)];
+
+        for (let j = 0; j < petalCount; j++) {
+            let angle = (2 * Math.PI / petalCount) * j;
+            let angleOffset = (Math.PI / 8) * Math.random(); // small jitter
+            let rad = angle + angleOffset;
+
+            // Triangle petal around the center
+            let cx = x + radius * Math.cos(rad);
+            let cz = z + radius * Math.sin(rad);
+
+            let tip = vec4(cx, y + 0.01, cz, 1.0);
+            let left = vec4(x + radius * Math.cos(rad - 0.2), y, z + radius * Math.sin(rad - 0.2), 1.0);
+            let right = vec4(x + radius * Math.cos(rad + 0.2), y, z + radius * Math.sin(rad + 0.2), 1.0);
+
+            positionsArray.push(tip, left, right);
+            colorsArray.push(petalColor, petalColor, petalColor);
+        }
+
+        // Draw the center of the flower as a tiny triangle
+        let c1 = vec4(x, y + 0.005, z, 1.0);
+        let c2 = vec4(x + 0.01, y + 0.005, z, 1.0);
+        let c3 = vec4(x, y + 0.005, z + 0.01, 1.0);
+
+        positionsArray.push(c1, c2, c3);
+        colorsArray.push(centerColor, centerColor, centerColor);
+    }
 }
 
 
 
-
-
-/*function triangle(a, b, c)
+function triangle(a, b, c)
 {
-    var color = vec4(1.000, 0.922, 0.804, 1.0);
-    var color2 = vec4(0.545, 0.271, 0.075, 1.0);
     positionsArray.push(a, b, c);
-    colorsArray.push(color2, color2, color);
-}*/
+    colorsArray.push(vec4(0.545, 0.271, 0.075, 1.0), // brown
+                    vec4(0.26275, 0.14902, 0.08627, 1.0), // brown
+                    vec4(0.26275, 0.14902, 0.08627, 1.0)); // light brown
+}
     
-/*function divideTriangle(a, b, c, factor, count)
+function divideTriangle(a, b, c, factor, count)
 {
 
     // check for end of recursion                                               
@@ -254,7 +329,7 @@ function drawBranch(x, y, z, angle, depth, length, width) {
         divideTriangle( c, a, midpoint, newFactor, count );
         divideTriangle( b, c, midpoint, newFactor, count );
     }
-}*/
+}
 
 // slight change
     
@@ -268,8 +343,10 @@ var render = function(){
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
-    gl.drawArrays(gl.TRIANGLES, 0, positionsArray.length);
-    theta += 0.002;
+    gl.drawArrays(gl.TRIANGLES, 0, grassVertexCount);
+    gl.drawArrays(gl.LINES, grassVertexCount, treeVertexCount);
+
+    theta += 0.0018;
     requestAnimationFrame(render);
 }
 
