@@ -7,6 +7,8 @@
 var mountainExample = function(){
 var canvas;
 var gl;
+var program;
+
 
 var positionsArray = [];
 var colorsArray = [];
@@ -117,7 +119,7 @@ window.onload = function init() {
     //
     //  Load shaders and initialize attribute buffers
     //
-    var program = initShaders(gl, "vertex-shader", "fragment-shader");
+    program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
     var vBuffer = gl.createBuffer();
