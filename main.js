@@ -144,12 +144,12 @@ window.onload = function init() {
     gl.vertexAttribPointer(texCoordLoc, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(texCoordLoc);
 
+    var image = document.getElementById("texImage");
+    configureTexture(image);
+
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
 
-
-    var image = document.getElementById("texImage");
-    configureTexture(image);
 
     render();
 }
