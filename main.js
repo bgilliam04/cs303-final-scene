@@ -69,33 +69,8 @@ window.onload = function init() {
         configureTexture(image);
     };
 
-    const element = document.getElementById("getcount");
-    element.onchange = function() {
-        const divLevel = element.value;
-    
-        // storing my previous values so that it generates one image for each level
-        // i had to look up how to do this and found a stack overflow post with slice()
-        if (storePast[divLevel]) {
-            positionsArray = storePast[divLevel].positions.slice();
-            colorsArray = storePast[divLevel].colors.slice();
-        } else {
-            positionsArray = [];
-            colorsArray = [];
-            divideRectangles(80, 80, divLevel);
-    
-            storePast[divLevel] = {
-                positions: positionsArray.slice(),
-                colors: colorsArray.slice()
-            };
-        }
-    
-        gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, flatten(positionsArray), gl.STATIC_DRAW);
-    
-        gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, flatten(colorsArray), gl.STATIC_DRAW);
-    };
-    
+    program = initShaders(gl, "vertex-shader", "fragment-shader");
+    gl.useProgram(program);
     
     divideRectangles(80, 80, element.value); 
     addStonePath();
@@ -119,8 +94,7 @@ window.onload = function init() {
     //
     //  Load shaders and initialize attribute buffers
     //
-    program = initShaders(gl, "vertex-shader", "fragment-shader");
-    gl.useProgram(program);
+    
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
