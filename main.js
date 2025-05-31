@@ -454,8 +454,12 @@ var render = function(){
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
+    console.log("Total vertices:", positionsArray.length);
+    console.log("Grass:", grassVertexCount);
+    console.log("Trees:", positionsArray.length - grassVertexCount);
+
     gl.drawArrays(gl.TRIANGLES, 0, grassVertexCount);
-    gl.drawArrays(gl.LINES, grassVertexCount, treeVertexCount);
+    gl.drawArrays(gl.LINES, grassVertexCount, positionsArray.length - grassVertexCount);
 
     theta += 0.0018;
     requestAnimationFrame(render);
