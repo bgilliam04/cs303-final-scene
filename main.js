@@ -64,11 +64,6 @@ window.onload = function init() {
     gl = canvas.getContext('webgl2');
     if (!gl) alert("WebGL 2.0 isn't available" );
 
-    var image = document.getElementById("texImage");
-    image.onload = function() {
-        configureTexture(image);
-    };
-
     program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
     
