@@ -72,7 +72,7 @@ window.onload = function init() {
     program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
     
-    divideRectangles(80, 80, element.value); 
+    divideRectangles(80, 80, 0.1); 
     addStonePath();
     addFlowers(80); // you can make this higher or lower!
   
