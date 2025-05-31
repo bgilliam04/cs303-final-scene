@@ -115,14 +115,22 @@ window.onload = function init() {
     gl.vertexAttribPointer(texCoordLoc, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(texCoordLoc);
 
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+
     var image = document.getElementById("texImage");
-    configureTexture(image);
+    image.onload = function() {
+        configureTexture(image);
+        render(); // only start rendering after image loads
+    };
+
 
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
 
 
-    render();
+   // render();
 }
 
 function divideRectangles(rows, cols, heightScale) {

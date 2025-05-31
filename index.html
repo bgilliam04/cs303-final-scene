@@ -40,8 +40,11 @@ uniform sampler2D uTextureMap;
 void
 main()
 {
-    fColor = vColor * texture(uTextureMap, vTexCoord);
+    fColor = vColor;
 
+    if (vTexCoord != vec2(0.0)) {
+     fColor *= texture(uTextureMap, vTexCoord);
+    }
 
 }
 </script>
