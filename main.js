@@ -7,24 +7,10 @@
 var mountainExample = function(){
 var canvas;
 var gl;
-var program;
-
 
 var positionsArray = [];
 var colorsArray = [];
-var texCoordsArray = [];
-var texture; 
 
-var texCoord = [
-    vec2(0, 0),
-    vec2(0, 1),
-    vec2(1, 1),
-    vec2(1, 0)
-];
-
-
-var storePast = {};
-    
 var radius = 4;
 var  fovy =45.0;  // Field-of-view in Y direction angle (in degrees)           
 var  aspect;       // Viewport aspect ratio                                     
@@ -44,18 +30,6 @@ var theta = 0;
 const at = vec3(0.0, 1.0, 0.0);
 const up = vec3(0.0, 1.0, 0.0);
 
-function configureTexture( image ) {
-    texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB,
-         gl.RGB, gl.UNSIGNED_BYTE, image);
-    gl.generateMipmap(gl.TEXTURE_2D);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
-                      gl.NEAREST_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-    gl.uniform1i(gl.getUniformLocation(program, "uTextureMap"), 0);
-}
 
 window.onload = function init() {
 
@@ -64,11 +38,8 @@ window.onload = function init() {
     gl = canvas.getContext('webgl2');
     if (!gl) alert("WebGL 2.0 isn't available" );
 
-    program = initShaders(gl, "vertex-shader", "fragment-shader");
-    gl.useProgram(program);
-    
-    divideRectangles(80, 80, 0.1); 
-    addStonePath();
+        divideRectangles(80, 80, 0.1); 
+    //addStonePath();
     addFlowers(80); // you can make this higher or lower!
   
     grassVertexCount = positionsArray.length;
@@ -89,7 +60,8 @@ window.onload = function init() {
     //
     //  Load shaders and initialize attribute buffers
     //
-    
+    var program = initShaders(gl, "vertex-shader", "fragment-shader");
+    gl.useProgram(program);
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
@@ -107,30 +79,7 @@ window.onload = function init() {
     gl.vertexAttribPointer(colorLoc, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorLoc);
 
-    var tBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, tBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW);
-
-    var texCoordLoc = gl.getAttribLocation(program, "aTexCoord");
-    gl.vertexAttribPointer(texCoordLoc, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(texCoordLoc);
-
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-
-
-    var image = document.getElementById("texImage");
-    image.onload = function() {
-        configureTexture(image);
-        render(); // only start rendering after image loads
-    };
-
-
-    modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
-    projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
-
-
-   // render();
+        render();
 }
 
 function divideRectangles(rows, cols, heightScale) {
@@ -310,106 +259,25 @@ function addFlowers(count) {
     }
 }
 
-function addRectangleTile(centerX, centerZ, width, depth, color) {
-    let x0 = centerX - width / 2;
-    let x1 = centerX + width / 2;
-    let z0 = centerZ - depth / 2;
-    let z1 = centerZ + depth / 2;
-    let y = 0.09; // slightly above the grass
-
-    let a = vec4(x0, y, z0, 1.0);
-    let b = vec4(x1, y, z0, 1.0);
-    let c = vec4(x1, y, z1, 1.0);
-    let d = vec4(x0, y, z1, 1.0);
-
-    positionsArray.push(a, b, c);
-    colorsArray.push(color, color, color);
-    positionsArray.push(a, c, d);
-    colorsArray.push(color, color, color);
-}
-
-function addTriangularPrism(centerX, centerZ, width, height, depth, color) {
-    let x0 = centerX - width / 2;
-    let x1 = centerX + width / 2;
-    let z0 = centerZ - depth / 2;
-    let z1 = centerZ + depth / 2;
-    let baseY = 0.09;
-
-    let top = vec4(centerX, baseY + height, centerZ, 1.0);
-    let bl = vec4(x0, baseY, z0, 1.0);
-    let br = vec4(x1, baseY, z0, 1.0);
-    let fl = vec4(x0, baseY, z1, 1.0);
-    let fr = vec4(x1, baseY, z1, 1.0);
-
-    // Front face triangle
-    positionsArray.push(top, fl, fr);
-    colorsArray.push(color, color, color);
-
-    // Left face triangle
-    positionsArray.push(top, bl, fl);
-    colorsArray.push(color, color, color);
-
-    // Right face triangle
-    positionsArray.push(top, fr, br);
-    colorsArray.push(color, color, color);
-
-    // Bottom (optional)
-    positionsArray.push(bl, br, fr);
-    positionsArray.push(bl, fr, fl);
-    colorsArray.push(color, color, color, color, color, color);
-}
-
-function addStonePath() {
-    const stoneColor = vec4(0.5, 0.5, 0.5, 1.0); // grayish
-
-    for (let i = 0; i < 12; i++) {
-        let x = -0.8 + i * 0.15;
-        let z = 0.2 + Math.sin(i * 0.3) * 0.2;
-
-        if (i % 3 === 0) {
-            addTriangularPrism(x, z, 0.08, 0.05, 0.1, stoneColor);
-        } else {
-            addTexturedStoneTile(x, z, 0.1, 0.1, stoneColor);
-        }
-    }
-}
-
- function addTexturedStoneTile(x, z, width, depth, color) {
-    let y = 0.09;
-
-    let a = vec4(x - width / 2, y, z - depth / 2, 1.0);
-    let b = vec4(x + width / 2, y, z - depth / 2, 1.0);
-    let c = vec4(x + width / 2, y, z + depth / 2, 1.0);
-    let d = vec4(x - width / 2, y, z + depth / 2, 1.0);
-
-    quad(a, b, c, d, color); // now includes texture coords
-}
-
 
 function quad(a, b, c, d, color) {
     positionsArray.push(a);
     colorsArray.push(color);
-    texCoordsArray.push(texCoord[0]);
 
     positionsArray.push(b);
     colorsArray.push(color);
-    texCoordsArray.push(texCoord[1]);
 
     positionsArray.push(c);
     colorsArray.push(color);
-    texCoordsArray.push(texCoord[2]);
 
     positionsArray.push(a);
     colorsArray.push(color);
-    texCoordsArray.push(texCoord[0]);
 
     positionsArray.push(c);
     colorsArray.push(color);
-    texCoordsArray.push(texCoord[2]);
 
     positionsArray.push(d);
     colorsArray.push(color);
-    texCoordsArray.push(texCoord[3]);
 }
 
 
@@ -457,12 +325,8 @@ var render = function(){
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
-    console.log("Total vertices:", positionsArray.length);
-    console.log("Grass:", grassVertexCount);
-    console.log("Trees:", positionsArray.length - grassVertexCount);
-
     gl.drawArrays(gl.TRIANGLES, 0, grassVertexCount);
-    gl.drawArrays(gl.LINES, grassVertexCount, positionsArray.length - grassVertexCount);
+    gl.drawArrays(gl.LINES, grassVertexCount, treeVertexCount);
 
     theta += 0.0018;
     requestAnimationFrame(render);

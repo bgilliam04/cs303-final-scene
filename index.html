@@ -7,10 +7,8 @@
 
 in  vec4 aPosition;
 in vec4 aColor;
-in vec2 aTexCoord;
 
 out vec4 vColor;
-out vec2 vTexCoord;
 
 
 uniform mat4 uModelViewMatrix;
@@ -31,20 +29,14 @@ void main()
 precision mediump float;
 
 in vec4 vColor;
-in vec2 vTexCoord;
 out vec4 fColor;
 
 
-uniform sampler2D uTextureMap;
 
 void
 main()
 {
     fColor = vColor;
-
-    if (vTexCoord != vec2(0.0)) {
-     fColor *= texture(uTextureMap, vTexCoord);
-    }
 
 }
 </script>
@@ -57,7 +49,6 @@ main()
 <canvas id="gl-canvas" width="512" height="512">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
-<img id="texImage" src="stone.png" hidden crossorigin="anonymous">
 <div>
  <p>updated 8:44pm</p> </div>
 
