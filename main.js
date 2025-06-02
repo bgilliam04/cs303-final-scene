@@ -38,8 +38,8 @@ window.onload = function init() {
     gl = canvas.getContext('webgl2');
     if (!gl) alert("WebGL 2.0 isn't available" );
 
-        divideRectangles(80, 80, 0.1); 
-    //addStonePath();
+    divideRectangles(80, 80, 0.1); 
+    addStonePath();
     addFlowers(80); // you can make this higher or lower!
   
     grassVertexCount = positionsArray.length;
@@ -79,7 +79,10 @@ window.onload = function init() {
     gl.vertexAttribPointer(colorLoc, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorLoc);
 
-        render();
+    modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
+    projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
+
+    render();
 }
 
 function divideRectangles(rows, cols, heightScale) {
@@ -258,6 +261,63 @@ function addFlowers(count) {
         colorsArray.push(centerColor, centerColor, centerColor);
     }
 }
+
+function addStonePath() {
+    const pathLength = 10;
+    const pathWidth = 0.16;
+    const spacing = 2.1;
+    const curveAmount = 0.3; // change this for wavy paths
+    const stoneColor = vec4(0.5, 0.5, 0.5, 1.0); // gray stone
+
+    for (let i = 0; i < pathLength; i++) {
+        let t = i / pathLength;
+
+        // Optional: create a gentle curve using sine
+        let x = -1 + t * spacing; // shift it left a bit
+        let z = Math.sin(t * Math.PI * 1) * curveAmount;
+
+        const stoneHeight = 0.03;
+        addStoneBox(x, 0.07, z, pathWidth, stoneHeight, pathWidth, stoneColor);
+
+    }
+}
+
+function addStoneBox(cx, cy, cz, w, h, d, color) {
+    const x0 = cx - w / 2;
+    const x1 = cx + w / 2;
+    const y0 = cy;
+    const y1 = cy + h;
+    const z0 = cz - d / 2;
+    const z1 = cz + d / 2;
+
+    // Define the 8 vertices
+    let v = [
+        vec4(x0, y0, z0, 1.0), // 0
+        vec4(x1, y0, z0, 1.0), // 1
+        vec4(x1, y0, z1, 1.0), // 2
+        vec4(x0, y0, z1, 1.0), // 3
+        vec4(x0, y1, z0, 1.0), // 4
+        vec4(x1, y1, z0, 1.0), // 5
+        vec4(x1, y1, z1, 1.0), // 6
+        vec4(x0, y1, z1, 1.0)  // 7
+    ];
+
+    // Draw 6 faces using `quad()`
+    // Bottom
+    quad(v[0], v[1], v[2], v[3], color);
+    // Top
+    quad(v[4], v[5], v[6], v[7], color);
+    // Front
+    quad(v[3], v[2], v[6], v[7], color);
+    // Back
+    quad(v[0], v[1], v[5], v[4], color);
+    // Left
+    quad(v[0], v[3], v[7], v[4], color);
+    // Right
+    quad(v[1], v[2], v[6], v[5], color);
+}
+
+
 
 
 function quad(a, b, c, d, color) {
