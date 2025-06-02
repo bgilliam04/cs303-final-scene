@@ -102,6 +102,7 @@ window.onload = function init() {
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.uniform1i(gl.getUniformLocation(program, "uTexture"),0);
     };
+    image.crossOrigin = "anonymous";
     image.src = "https://media.istockphoto.com/id/1410017441/vector/stone-wall-design-for-pattern-and-background-vector-illustration.jpg?s=612x612&w=0&k=20&c=2IY3PSG90KMqM--wgIK_pEBKBQVR8x0yvYr4mfwuWU4="; // 👈 put your texture image here
 
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
@@ -195,10 +196,10 @@ function drawBranch(x, y, z, angle, depth, lengthScale, width) {
 
         positionsArray.push(a, b, c);
         colorsArray.push(green, green, green);
-        textureArray.push(vec2(0.0, 0.0));
+        textureArray.push(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
         positionsArray.push(a, c, b);
         colorsArray.push(vec4(0.420, 0.557, 0.137,1), vec4(0.420, 0.557, 0.137,1), vec4(0.420, 0.557, 0.137,1));
-        textureArray.push(vec2(0.0, 0.0));
+        textureArray.push(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
     }
 
     return;
@@ -389,7 +390,7 @@ function quad(a, b, c, d, color) {
 function triangle(a, b, c)
 {
     positionsArray.push(a, b, c);
-    textureArray.push(vec2(0.0, 0.0));
+    textureArray.push(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
     colorsArray.push(vec4(0.545, 0.271, 0.075, 1.0), // brown
                     vec4(0.26275, 0.14902, 0.08627, 1.0), // brown
                     vec4(0.26275, 0.14902, 0.08627, 1.0)); // light brown
