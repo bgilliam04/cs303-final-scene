@@ -21,10 +21,6 @@ var eye;
 var grassVertexCount = 0;
 var treeVertexCount = 0;
 
-var trunkStart = 0;
-var trunkVertexCount = 0;
-var branchStart = 0;
-var branchVertexCount = 0;
 
 var brown = vec4(0.26275, 0.14902, 0.08627, 1.0);
 var green = vec4(0.333, 0.420, 0.184, 1.0);
@@ -238,14 +234,10 @@ function drawRotatedTree(rotationDegrees) {
 
     // Draw one normal tree at the origin
     drawTriangleTrunk(0.0, 0.0, 0.0, 0.9, 0.15, 4);
-    let afterTrunk = positionsArray.length;
-    trunkVertexCount += afterTrunk - start;
     positionsArray.push(vec4(0,0,0,1));
     textureArray.push(vec2(0.0, 0.0));
     colorsArray.push(vec4(0.26275, 0.14902, 0.08627, 1.0));
     drawBranch(0.0, 0.0, 0.0, 0, 10, 2.0, 0.005);
-    branchVertexCount += positionsArray.length - afterTrunk;
-
     
     
 
@@ -442,9 +434,8 @@ var render = function(){
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
-    gl.drawArrays(gl.TRIANGLES, 0, grassVertexCount); // Grass
-    gl.drawArrays(gl.TRIANGLES, grassVertexCount, trunkVertexCount); // Tree trunks
-    gl.drawArrays(gl.LINES, grassVertexCount + trunkVertexCount, branchVertexCount); // Tree branches
+    gl.drawArrays(gl.TRIANGLES, 0, grassVertexCount);
+    gl.drawArrays(gl.LINES, grassVertexCount, treeVertexCount);
 
     theta += 0.0018;
     requestAnimationFrame(render);
