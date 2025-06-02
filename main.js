@@ -102,7 +102,7 @@ window.onload = function init() {
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.uniform1i(gl.getUniformLocation(program, "uTexture"),0);
     };
-    image.src = "stone.png"; // 👈 put your texture image here
+    image.src = "https://media.istockphoto.com/id/1410017441/vector/stone-wall-design-for-pattern-and-background-vector-illustration.jpg?s=612x612&w=0&k=20&c=2IY3PSG90KMqM--wgIK_pEBKBQVR8x0yvYr4mfwuWU4="; // 👈 put your texture image here
 
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
