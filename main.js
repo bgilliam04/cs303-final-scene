@@ -4,6 +4,10 @@
 //https://stackoverflow.com/questions/58354311/recursive-fractal-2d-tree-drawing-in-webgl
 //https://stackoverflow.com/questions/13133574/creating-a-fractal-tree-in-opengl/13134379#13134379
 //more explaination of how to draw a fractal tree in webgl
+//https://learnopengl.com/Getting-started/Textures
+//information about texture mapping
+//https://community.khronos.org/t/texture-mapping-into-a-tile/105197/3
+//https://emunix.emich.edu/~mevett/GraphicsCourse/Labs/MattsLab6Textures/index.html
 var mountainExample = function(){
 var canvas;
 var gl;
@@ -12,21 +16,17 @@ var positionsArray = [];
 var colorsArray = [];
 var textureArray = [];
 
-
 var radius = 4;
-var  fovy =45.0;  // Field-of-view in Y direction angle (in degrees)           
+var  fovy = 45.0;  // Field-of-view in Y direction angle (in degrees)           
 var  aspect;       // Viewport aspect ratio                                     
 var eye;
 
 var grassVertexCount = 0;
 var treeVertexCount = 0;
-var stoneVertexCount = 0;
-var flowerVertexCount = 0;
-
 
 var brown = vec4(0.26275, 0.14902, 0.08627, 1.0);
 var green = vec4(0.333, 0.420, 0.184, 1.0);
-var color = vec4(0.2, 0.8, 0.2, 1.0); // Grass color
+//var color = vec4(0.2, 0.8, 0.2, 1.0); // Grass color
     
 var modelViewMatrixLoc, projectionMatrixLoc;
 var modelViewMatrix, projectionMatrix;
@@ -45,7 +45,7 @@ window.onload = function init() {
 
     divideRectangles(80, 80, 0.1); 
     addStonePath();
-    addFlowers(80); // you can make this higher or lower!
+    addFlowers(80); 
   
     grassVertexCount = positionsArray.length;
     for (let i = 0; i < 12; i++) {
@@ -67,13 +67,6 @@ window.onload = function init() {
     //
     var program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
-
-    console.log(
-        "positionsArray:", positionsArray.length,
-        "colorsArray:", colorsArray.length,
-        "textureArray:", textureArray.length
-    );
-
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
@@ -100,7 +93,7 @@ window.onload = function init() {
     gl.enableVertexAttribArray(texCoordLoc);
 
     var texture = gl.createTexture();
-    var image = new Image();
+    var image = document.getElementById("stone-image");
     image.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 
@@ -175,16 +168,16 @@ function drawBranch(x, y, z, angle, depth, lengthScale, width) {
     
 
   
-    // Calculate end point of the branch
+    // calculate end point of the branch
     let len = 0.2 * lengthScale;
     let rad = angle * Math.PI / 180;
 
     if (depth === 0) {
-    // Draw a leaf at the end of this branch
+    // draw a leaf at the end of this branch
     let leafSize = 0.3;
 
     
-    // Tip of the final branch
+    // tip of the final branch
     let leafX = x + 0.05 * lengthScale * Math.sin(rad);
     let leafY = y + 0.05 * lengthScale * Math.cos(rad);
     let leafZ = z;
@@ -220,7 +213,7 @@ function drawBranch(x, y, z, angle, depth, lengthScale, width) {
     let newX = x + len * Math.sin(rad);
     let newY = y + len * Math.cos(rad);
 
-    // Add the branch line (as 2 points)
+    // add the branch line by drawing it as two points
     positionsArray.push(vec4(x, y, z, 1));
     textureArray.push(vec2(0.0, 0.0));
     positionsArray.push(vec4(newX, newY, z, 1));
@@ -228,29 +221,24 @@ function drawBranch(x, y, z, angle, depth, lengthScale, width) {
 
     colorsArray.push(brown, brown);
 
-    // Recursive branches
+    // recursively drawing branches
     drawBranch(newX, newY, z, angle - 20, depth - 1, lengthScale * 0.8, width * 0.8);
     drawBranch(newX, newY, z, angle + 20, depth - 1, lengthScale * 0.8, width * 0.8);
 // red or whatever color you want
 }
 
 function drawRotatedTree(rotationDegrees) {
-    // Make a matrix that turns the tree around the Y axis
     let rotation = rotateY(rotationDegrees);
 
-    // Save how many points are already in your array
     let start = positionsArray.length;
 
-    // Draw one normal tree at the origin
     drawTriangleTrunk(0.0, 0.0, 0.0, 0.9, 0.15, 4);
     positionsArray.push(vec4(0,0,0,1));
     textureArray.push(vec2(0.0, 0.0));
     colorsArray.push(vec4(0.26275, 0.14902, 0.08627, 1.0));
     drawBranch(0.0, 0.0, 0.0, 0, 10, 2.0, 0.005);
     
-    
-
-    // After it's drawn, apply the rotation to the *new* points
+    // applying the roation to all the positions in the positionsArray
     for (let i = start; i < positionsArray.length; i++) {
         positionsArray[i] = mult(rotation, positionsArray[i]);
     }
@@ -265,14 +253,14 @@ function drawTriangleTrunk(x, y, z, height, width, divisions) {
 }
 
 function addFlowers(count) {
-    const petalColors = [
+    var petalColors = [
         vec4(1.0, 0.6, 0.8, 1.0), // pink
         vec4(1.0, 1.0, 0.5, 1.0), // yellow
         vec4(0.6, 0.6, 1.0, 1.0), // purple
         vec4(1.0, 0.7, 0.3, 1.0)  // orange
     ];
 
-    const centerColor = vec4(1.0, 0.9, 0.2, 1.0); // gold/yellow center
+    var centerColor = vec4(1.0, 0.9, 0.2, 1.0); // yellow center
 
     for (let i = 0; i < count; i++) {
         let x = -1 + 2 * Math.random();
@@ -286,10 +274,9 @@ function addFlowers(count) {
 
         for (let j = 0; j < petalCount; j++) {
             let angle = (2 * Math.PI / petalCount) * j;
-            let angleOffset = (Math.PI / 8) * Math.random(); // small jitter
-            let rad = angle + angleOffset;
+            
+            let rad = angle;
 
-            // Triangle petal around the center
             let cx = x + radius * Math.cos(rad);
             let cz = z + radius * Math.sin(rad);
 
@@ -302,7 +289,6 @@ function addFlowers(count) {
             colorsArray.push(petalColor, petalColor, petalColor);
         }
 
-        // Draw the center of the flower as a tiny triangle
         let c1 = vec4(x, y + 0.005, z, 1.0);
         let c2 = vec4(x + 0.01, y + 0.005, z, 1.0);
         let c3 = vec4(x, y + 0.005, z + 0.01, 1.0);
@@ -314,58 +300,50 @@ function addFlowers(count) {
 }
 
 function addStonePath() {
-    const pathLength = 10;
-    const pathWidth = 0.16;
-    const spacing = 2.1;
-    const curveAmount = 0.3; // change this for wavy paths
-    const stoneColor = vec4(0.5, 0.5, 0.5, 1.0); // gray stone
+    var pathLength = 9;
+    var pathWidth = 0.16;
+    var spacing = 2;
+    var curveAmount = 0.3; 
+    var stoneColor = vec4(0.5, 0.5, 0.5, 1.0); // gray stone
 
     for (let i = 0; i < pathLength; i++) {
         let t = i / pathLength;
 
-        // Optional: create a gentle curve using sine
-        let x = -1 + t * spacing; // shift it left a bit
+        let x = -0.9 + t * spacing; // shift it left a bit
         let z = Math.sin(t * Math.PI * 1) * curveAmount;
 
-        const stoneHeight = 0.03;
-        addStoneBox(x, 0.07, z, pathWidth, stoneHeight, pathWidth, stoneColor);
+        var stoneHeight = 0.03;
+        addStoneRectangle(x, 0.07, z, pathWidth, stoneHeight, pathWidth, stoneColor);
 
     }
 }
 
-function addStoneBox(cx, cy, cz, w, h, d, color) {
-    const x0 = cx - w / 2;
-    const x1 = cx + w / 2;
-    const y0 = cy;
-    const y1 = cy + h;
-    const z0 = cz - d / 2;
-    const z1 = cz + d / 2;
+function addStoneRectangle(cx, cy, cz, w, h, d, color) {
+    var x0 = cx - w / 2;
+    var x1 = cx + w / 2;
+    var y0 = cy;
+    var y1 = cy + h;
+    var z0 = cz - d / 2;
+    var z1 = cz + d / 2;
 
-    // Define the 8 vertices
-    let v = [
-        vec4(x0, y0, z0, 1.0), // 0
-        vec4(x1, y0, z0, 1.0), // 1
-        vec4(x1, y0, z1, 1.0), // 2
-        vec4(x0, y0, z1, 1.0), // 3
-        vec4(x0, y1, z0, 1.0), // 4
-        vec4(x1, y1, z0, 1.0), // 5
-        vec4(x1, y1, z1, 1.0), // 6
-        vec4(x0, y1, z1, 1.0)  // 7
+    let vertices = [
+        vec4(x0, y0, z0, 1.0), 
+        vec4(x1, y0, z0, 1.0), 
+        vec4(x1, y0, z1, 1.0), 
+        vec4(x0, y0, z1, 1.0), 
+        vec4(x0, y1, z0, 1.0), 
+        vec4(x1, y1, z0, 1.0), 
+        vec4(x1, y1, z1, 1.0), 
+        vec4(x0, y1, z1, 1.0)  
     ];
 
-    // Draw 6 faces using `quad()`
-    // Bottom
-    quad(v[0], v[1], v[2], v[3], color);
-    // Top
-    quad(v[4], v[5], v[6], v[7], color);
-    // Front
-    quad(v[3], v[2], v[6], v[7], color);
-    // Back
-    quad(v[0], v[1], v[5], v[4], color);
-    // Left
-    quad(v[0], v[3], v[7], v[4], color);
-    // Right
-    quad(v[1], v[2], v[6], v[5], color);
+
+    quad(vertices[0], vertices[1], vertices[2], vertices[3], color);
+    quad(vertices[4], vertices[5], vertices[6], vertices[7], color);
+    quad(vertices[3], vertices[2], vertices[6], vertices[7], color);
+    quad(vertices[0], vertices[1], vertices[5], vertices[4], color);
+    quad(vertices[0], vertices[3], vertices[7], vertices[4], color);
+    quad(vertices[1], vertices[2], vertices[6], vertices[5], color);
 }
 
 
