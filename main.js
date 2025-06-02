@@ -133,13 +133,20 @@ function divideRectangles(rows, cols, heightScale) {
 
             // creating 2 triangles from each rectangle
             positionsArray.push(vec4(x0, y00, z0, 1));
+            textureArray.push(vec2(0.0, 0.0));
             positionsArray.push(vec4(x1, y10, z0, 1));
+            textureArray.push(vec2(0.0, 0.0));
             positionsArray.push(vec4(x1, y11, z1, 1));
+            textureArray.push(vec2(0.0, 0.0));
+
 
 
             positionsArray.push(vec4(x0, y00, z0, 1));
+            textureArray.push(vec2(0.0, 0.0));
             positionsArray.push(vec4(x1, y11, z1, 1));
+            textureArray.push(vec2(0.0, 0.0));
             positionsArray.push(vec4(x0, y01, z1, 1));
+            textureArray.push(vec2(0.0, 0.0));
 
             // color gradient added so that it gets brighter towards the top of the grass
             let colorA = vec4(0.2 + y00, 0.4 + y00, 0.2, 1.0);
@@ -188,8 +195,10 @@ function drawBranch(x, y, z, angle, depth, lengthScale, width) {
 
         positionsArray.push(a, b, c);
         colorsArray.push(green, green, green);
+        textureArray.push(vec2(0.0, 0.0));
         positionsArray.push(a, c, b);
         colorsArray.push(vec4(0.420, 0.557, 0.137,1), vec4(0.420, 0.557, 0.137,1), vec4(0.420, 0.557, 0.137,1));
+        textureArray.push(vec2(0.0, 0.0));
     }
 
     return;
@@ -201,7 +210,9 @@ function drawBranch(x, y, z, angle, depth, lengthScale, width) {
 
     // Add the branch line (as 2 points)
     positionsArray.push(vec4(x, y, z, 1));
+    textureArray.push(vec2(0.0, 0.0));
     positionsArray.push(vec4(newX, newY, z, 1));
+    textureArray.push(vec2(0.0, 0.0));
 
     colorsArray.push(brown, brown);
 
@@ -221,6 +232,7 @@ function drawRotatedTree(rotationDegrees) {
     // Draw one normal tree at the origin
     drawTriangleTrunk(0.0, 0.0, 0.0, 0.9, 0.15, 4);
     positionsArray.push(vec4(0,0,0,1));
+    textureArray.push(vec2(0.0, 0.0));
     colorsArray.push(vec4(0.26275, 0.14902, 0.08627, 1.0));
     drawBranch(0.0, 0.0, 0.0, 0, 10, 2.0, 0.005);
     
@@ -274,6 +286,7 @@ function addFlowers(count) {
             let right = vec4(x + radius * Math.cos(rad + 0.2), y, z + radius * Math.sin(rad + 0.2), 1.0);
 
             positionsArray.push(tip, left, right);
+            textureArray.push(vec2(0.0, 0.0));
             colorsArray.push(petalColor, petalColor, petalColor);
         }
 
@@ -283,6 +296,7 @@ function addFlowers(count) {
         let c3 = vec4(x, y + 0.005, z + 0.01, 1.0);
 
         positionsArray.push(c1, c2, c3);
+        textureArray.push(vec2(0.0, 0.0));
         colorsArray.push(centerColor, centerColor, centerColor);
     }
 }
@@ -375,6 +389,7 @@ function quad(a, b, c, d, color) {
 function triangle(a, b, c)
 {
     positionsArray.push(a, b, c);
+    textureArray.push(vec2(0.0, 0.0));
     colorsArray.push(vec4(0.545, 0.271, 0.075, 1.0), // brown
                     vec4(0.26275, 0.14902, 0.08627, 1.0), // brown
                     vec4(0.26275, 0.14902, 0.08627, 1.0)); // light brown
