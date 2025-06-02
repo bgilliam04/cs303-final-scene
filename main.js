@@ -20,6 +20,8 @@ var eye;
 
 var grassVertexCount = 0;
 var treeVertexCount = 0;
+var stoneVertexCount = 0;
+var flowerVertexCount = 0;
 
 
 var brown = vec4(0.26275, 0.14902, 0.08627, 1.0);
@@ -65,6 +67,13 @@ window.onload = function init() {
     //
     var program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
+
+    console.log(
+        "positionsArray:", positionsArray.length,
+        "colorsArray:", colorsArray.length,
+        "textureArray:", textureArray.length
+    );
+
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
@@ -289,7 +298,7 @@ function addFlowers(count) {
             let right = vec4(x + radius * Math.cos(rad + 0.2), y, z + radius * Math.sin(rad + 0.2), 1.0);
 
             positionsArray.push(tip, left, right);
-            textureArray.push(vec2(0.0, 0.0));
+            textureArray.push(vec2(0.0, 0.0),vec2(0.0, 0.0),vec2(0.0, 0.0));
             colorsArray.push(petalColor, petalColor, petalColor);
         }
 
@@ -299,7 +308,7 @@ function addFlowers(count) {
         let c3 = vec4(x, y + 0.005, z + 0.01, 1.0);
 
         positionsArray.push(c1, c2, c3);
-        textureArray.push(vec2(0.0, 0.0));
+        textureArray.push(vec2(0.0, 0.0),vec2(0.0, 0.0),vec2(0.0, 0.0));
         colorsArray.push(centerColor, centerColor, centerColor);
     }
 }
@@ -427,7 +436,7 @@ function divideTriangle(a, b, c, factor, count)
 var render = function(){
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    eye = vec3(radius*Math.cos(theta), 1, radius*Math.sin(theta));
+    eye = vec3(radius * Math.cos(theta), 1, radius * Math.sin(theta));
     modelViewMatrix = lookAt(eye, at, up);
     projectionMatrix = perspective(fovy, aspect, 2, 10);
 
@@ -440,6 +449,7 @@ var render = function(){
     theta += 0.0018;
     requestAnimationFrame(render);
 }
+
 
 }
 mountainExample();
