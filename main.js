@@ -200,6 +200,7 @@ function drawBranch(x, y, z, angle, depth, lengthScale, width) {
         positionsArray.push(a, c, b);
         colorsArray.push(vec4(0.420, 0.557, 0.137,1), vec4(0.420, 0.557, 0.137,1), vec4(0.420, 0.557, 0.137,1));
         textureArray.push(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
+
     }
 
     return;
@@ -432,8 +433,8 @@ var render = function(){
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
-    gl.drawArrays(gl.TRIANGLES, 0, positionsArray.length);
-    //gl.drawArrays(gl.LINES, grassVertexCount, treeVertexCount);
+    gl.drawArrays(gl.TRIANGLES, 0, grassVertexCount);
+    gl.drawArrays(gl.LINES, grassVertexCount, treeVertexCount);
 
     theta += 0.0018;
     requestAnimationFrame(render);
