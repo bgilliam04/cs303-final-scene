@@ -10,6 +10,8 @@ var gl;
 
 var positionsArray = [];
 var colorsArray = [];
+var textureArray = [];
+
 
 var radius = 4;
 var  fovy =45.0;  // Field-of-view in Y direction angle (in degrees)           
@@ -78,6 +80,29 @@ window.onload = function init() {
     var colorLoc = gl.getAttribLocation(program, "aColor");
     gl.vertexAttribPointer(colorLoc, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorLoc);
+
+    var tBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, tBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(textureArray), gl.STATIC_DRAW);
+
+    var texCoordLoc = gl.getAttribLocation(program, "aTexCoord");
+    gl.vertexAttribPointer(texCoordLoc, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(texCoordLoc);
+
+    var texture = gl.createTexture();
+    var image = new Image();
+    image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 
+            gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+        gl.generateMipmap(gl.TEXTURE_2D);
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.uniform1i(gl.getUniformLocation(program, "uTexture"),0);
+    };
+    image.src = "stone.png"; // 👈 put your texture image here
 
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
@@ -323,21 +348,27 @@ function addStoneBox(cx, cy, cz, w, h, d, color) {
 function quad(a, b, c, d, color) {
     positionsArray.push(a);
     colorsArray.push(color);
+    textureArray.push(vec2(0, 0));
 
     positionsArray.push(b);
     colorsArray.push(color);
+    textureArray.push(vec2(1, 0));
 
     positionsArray.push(c);
     colorsArray.push(color);
+    textureArray.push(vec2(1, 1));
 
     positionsArray.push(a);
     colorsArray.push(color);
+    textureArray.push(vec2(0, 0));
 
     positionsArray.push(c);
     colorsArray.push(color);
+    textureArray.push(vec2(1, 1));
 
     positionsArray.push(d);
     colorsArray.push(color);
+    textureArray.push(vec2(0, 1));
 }
 
 
